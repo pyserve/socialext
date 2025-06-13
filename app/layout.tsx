@@ -1,15 +1,15 @@
+import ZohoContextProvider from "@/components/app-providers";
+import GoogleAPIProvider from "@/components/google-api-providers";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Roboto } from "next/font/google";
+import Script from "next/script";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const roboto = Roboto({
+  variable: "--font-roboto",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -24,10 +24,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <head>
+        <Script
+          src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"
+          strategy="beforeInteractive"
+        />
+      </head>
+      <body className={`${roboto.variable} antialiased`}>
+        <GoogleAPIProvider>
+          <ZohoContextProvider>{children}</ZohoContextProvider>
+        </GoogleAPIProvider>
+        <Toaster />
       </body>
     </html>
   );
