@@ -98,16 +98,11 @@ export default function LeadForm() {
         setIsSubmitting(false);
         return;
       }
-
-      const res2 = await window.ZOHO.CRM.API.insertRecord({
-        Entity: "Leads",
-        APIData: {
-          ...data,
-          Meeting_Time: dayjs
-            .tz(`${formattedDate}T${data.Meeting_Time}`, timezoneName)
-            .format(),
-        },
-        Trigger: ["workflow"],
+      const res2 = await axios.post("/api/leads", {
+        ...data,
+        Meeting_Time: dayjs
+          .tz(`${formattedDate}T${data.Meeting_Time}`, timezoneName)
+          .format(),
       });
       console.log("🚀 ~ onSubmit ~ res:", res2);
       form.reset();
@@ -115,16 +110,9 @@ export default function LeadForm() {
       window.scrollTo({ top: 0, behavior: "smooth" });
       setCreated(true);
     } catch (error: any) {
+      console.log("🚀 ~ onSubmit ~ error:", error);
       if (error instanceof Error) toast.error(error.message);
-      if (error.data) {
-        const err = error.data?.[0];
-        const errorMessage = `${err?.code}: ${JSON.stringify(
-          err?.details,
-          null,
-          4
-        )}`;
-        toast.error(errorMessage);
-      }
+      toast.error(`${error?.code}: ${error?.message}`);
     } finally {
       setIsSubmitting(false);
     }
